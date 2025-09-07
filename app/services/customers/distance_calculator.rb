@@ -3,7 +3,6 @@ module Customers
     extend self
     
     
-    # Mumbai office coordinates
     MUMBAI_LAT = 19.0590317
     MUMBAI_LON = 72.7553452
     EARTH_RADIUS_KM = 6371.0

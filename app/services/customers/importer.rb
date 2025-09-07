@@ -1,40 +1,3 @@
-# require 'json'
-
-
-# module Customers
-#   class Importer
-#     class ParseError < StandardError; end
-
-
-#       def initialize(file)
-#         @file = file
-#       end
-
-#       def call
-#         result = []
-#         @file.rewind if @file.respond_to?(:rewind)
-#         @file.each_line.with_index(1) do |line, ln|
-#           next if line.strip.empty?
-#           begin
-#             obj = JSON.parse(line)
-#             unless obj['user_id'] && obj['name'] && obj['latitude'] && obj['longitude']
-#               raise ParseError, "missing key in line #{ln}"
-#             end
-#             result << {
-#               user_id: obj['user_id'],
-#               name: obj['name'],
-#               latitude: obj['latitude'],
-#               longitude: obj['longitude']
-#             }
-#           rescue JSON::ParserError => e
-#             raise ParseError, "invalid JSON on line #{ln}: #{e.message}"
-#           end
-#         end
-#         result
-#       end
-# end
-# end
-
 
 require 'json'
 require 'stringio'
@@ -43,7 +6,6 @@ module Customers
   class Importer
     class ParseError < StandardError; end
 
-    # file: an ActionDispatch::Http::UploadedFile, File, or any IO-like object
     def initialize(file)
       @file = file
     end
@@ -53,7 +15,7 @@ module Customers
       result = []
       io = to_io(@file)
 
-      # Ensure we start at beginning
+      # This is to ensure we start at beginning
       io.rewind if io.respond_to?(:rewind)
 
       io.each_line.with_index(1) do |line, ln|
@@ -79,9 +41,7 @@ module Customers
 
     private
 
-    # Normalize a few common inputs into an IO-like object that responds to each_line
     def to_io(obj)
-      # ActionDispatch::Http::UploadedFile (typical in controller uploads)
       if defined?(ActionDispatch::Http::UploadedFile) && obj.is_a?(ActionDispatch::Http::UploadedFile)
         return obj.tempfile
       end
